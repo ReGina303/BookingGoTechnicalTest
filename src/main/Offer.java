@@ -8,6 +8,7 @@ package main;
 
 public class Offer {
     private final Car car;
+    private final String supplier;
     private final int price;
 
     /**
@@ -15,8 +16,9 @@ public class Offer {
      * @param requiredCar The required car
      * @param requiredPrice The required price
      */
-    public Offer (String requiredCar, int requiredPrice) {
+    public Offer (String requiredCar, String requiredSupplier, int requiredPrice) {
         car = new Car(requiredCar);
+        supplier = requiredSupplier;
         price = requiredPrice;
     }
 
@@ -58,6 +60,6 @@ public class Offer {
 
     @Override
     public String toString() {
-        return "{" + car.getCarType() + "} - {" + price + "}";
+        return "{" + car.getCarType() + "} - {" + supplier + "} - {" + price + "}";
     }
 }

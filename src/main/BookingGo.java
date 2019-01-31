@@ -48,6 +48,60 @@ public class BookingGo {
         } while (isChanged);
     }
 
+    public static void getTheOffersFromSuppliers (String supplier, Map<String, String> param,
+                                                  PrintWriter debug, int noOfPassengers, Map<String, Offer> offers) {
+        // Get the required URL to the request
+        String supplierURL = ParameterAndResponseHandler.getURL(supplier, param);
+
+        debug.println("(BookingGo) The URL for " + supplier + " is: " + supplierURL);
+
+        try {
+            URL url = new URL(supplierURL);
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // Set timeouts
+            connection.setConnectTimeout(2000);
+
+            // Set the request
+            connection.setRequestMethod("GET");
+
+            connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+
+            int responseCode = connection.getResponseCode();
+            debug.println("(BookingGo) The response code is: " + responseCode);
+
+            // If the response code was OK then get the response
+            if (responseCode == connection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(
+                        connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                in.close();
+
+                debug.println("(BookingGo) Response: " + response.toString());
+                System.out.println(response.toString());
+
+                offers = ParameterAndResponseHandler.getCarsAndPrices(response.toString(), debug, supplier, offers);
+                debug.println("(BookingGo) Before sorting...");
+                for (Map.Entry<String, Offer> offer : offers.entrySet())
+                    debug.println(offer.getValue().toString());
+
+            }
+
+            connection.disconnect();
+        }
+        catch (IOException e){
+            System.err.println(e);
+        }
+
+    }
+
     public static void main (String [] args) throws Exception {
         /**
          * Create a debug file used across the application
@@ -65,7 +119,7 @@ public class BookingGo {
 
         // Check the commandline arguments
         if (args.length != 5) {
-            System.out.println("There must be exactly 4 arguments: Pick up latitude and longitude" +
+            System.out.println("There must be exactly 5 arguments: Pick up latitude and longitude" +
                     " and drop off latitude and longitude and also the number of passengers");
             debug.println("(BookingGo) Wrong number of commandline arguments");
             debug.println("(BookingGo) *******EXIT*******");
@@ -85,59 +139,25 @@ public class BookingGo {
 
         int noOfPassengers = Integer.parseInt(args[4]);
 
-        // Get the required URL to the request
-        String daveURL = ParameterAndResponseHandler.getURL("dave", param);
+        String[] suppliers = new String[3];
+        suppliers[0] = "dave";
+        suppliers[1] = "jeff";
+        suppliers[2] = "eric";
 
-        debug.println("(BookingGo) The URL is: " + daveURL);
+        Map<String, Offer> offers = new HashMap<>();
 
-        URL dave = new URL(daveURL);
+        for (String supplier : suppliers)
+            getTheOffersFromSuppliers(supplier, param, debug, noOfPassengers, offers);
 
-        HttpURLConnection connection = (HttpURLConnection) dave.openConnection();
+        Offer[] offersArray = offers.values().toArray(new Offer[0]);
 
-        // Set timeouts
-        connection.setConnectTimeout(2000);
-        //connection.setReadTimeout(2000);
+        //Sort the list of offers
+        bubbleSort(offersArray);
 
-        // Set the request
-        connection.setRequestMethod("GET");
-
-        connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
-
-        int responseCode = connection.getResponseCode();
-        debug.println("(BookingGo) The response code is: " + responseCode);
-
-        // If the response code was OK then get the response
-        if(responseCode == connection.HTTP_OK) {
-            BufferedReader in = new BufferedReader(new InputStreamReader(
-                    connection.getInputStream()));
-            String inputLine;
-            StringBuffer response = new StringBuffer();
-
-            while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-            }
-
-            in.close();
-
-            debug.println("(BookingGo) " + response.toString());
-            System.out.println(response.toString());
-
-            Offer[] results = ParameterAndResponseHandler.getCarsAndPrices(response.toString(), debug);
-            debug.println("Before sorting...");
-            for (Offer result : results)
-                debug.println(result.toString());
-
-            // Sort the list of offers
-            bubbleSort(results);
-
-            // Before print the list of offers it takes into account the number of passengers
-            for (Offer result : results) {
-                if (result.getNoOfPassengers() >= noOfPassengers)
-                    System.out.println(result.toString());
-            }
-        }
-
-        connection.disconnect();
+        // Before print the list of offers it takes into account the number of passengers
+        for (Offer offer : offersArray)
+            if (offer.getNoOfPassengers() >= noOfPassengers)
+                System.out.println(offer.toString());
 
         debug.println("**********Finished*********");
         debug.println();
