@@ -130,8 +130,10 @@ public class BookingGo {
             // Sort the list of offers
             bubbleSort(results);
 
-            for (Offer result : results)
-                System.out.println(result.toString());
+            for (Offer result : results) {
+                if (result.getNoOfPassengers() >= noOfPassengers)
+                    System.out.println(result.toString());
+            }
         }
 
         connection.disconnect();

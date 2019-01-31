@@ -36,6 +36,10 @@ public class Offer {
         return price;
     }
 
+    public int getNoOfPassengers () {
+        return car.getNoOfPassengers();
+    }
+
     /**
      * Comparing this car against a given other one basing the comparision on prices, then the car types
      * @param other The car with what it needs to be compared
