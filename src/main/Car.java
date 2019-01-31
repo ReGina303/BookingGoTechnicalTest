@@ -10,6 +10,10 @@ public class Car {
     private final String carType;
     private final int noOfPassengers;
 
+    /**
+     * Constructor
+     * @param requiredCarType The required car type
+     */
     public Car (String requiredCarType) {
         carType = requiredCarType;
         switch(carType) {

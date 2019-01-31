@@ -1,6 +1,6 @@
 /**
  * BookingGo Technical Test
- * Last update: 30.01.2019
+ * Last update: 31.01.2019
  *
  * @author Nikolett Bakos
  */
@@ -130,6 +130,7 @@ public class BookingGo {
             // Sort the list of offers
             bubbleSort(results);
 
+            // Before print the list of offers it takes into account the number of passengers
             for (Offer result : results) {
                 if (result.getNoOfPassengers() >= noOfPassengers)
                     System.out.println(result.toString());

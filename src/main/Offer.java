@@ -1,6 +1,6 @@
 /**
  * A class represents a pair of car and price to help improve the sorting
- * Last updated: 30.01.2019
+ * Last updated: 31.01.2019
  *
  * @author Nikolett Bakos
  */
@@ -36,6 +36,10 @@ public class Offer {
         return price;
     }
 
+    /**
+     * Get the maximum number of passengers that the car can hold
+     * @return The maximum number of passengers that the car can hold
+     */
     public int getNoOfPassengers () {
         return car.getNoOfPassengers();
     }
