@@ -48,8 +48,15 @@ public class BookingGo {
         } while (isChanged);
     }
 
+    /**
+     * Get the offers from a supplier and store the cheapest offer for each car type in a HashMap
+     * @param supplier Name of the supplier
+     * @param param Latitude and longitude of pick up and drop off locations
+     * @param debug Debug file
+     * @param offers HashMap of offers got so far (may empty)
+     */
     public static void getTheOffersFromSuppliers (String supplier, Map<String, String> param,
-                                                  PrintWriter debug, int noOfPassengers, Map<String, Offer> offers) {
+                                                  PrintWriter debug, Map<String, Offer> offers) {
         // Get the required URL to the request
         String supplierURL = ParameterAndResponseHandler.getURL(supplier, param);
 
@@ -87,7 +94,10 @@ public class BookingGo {
                 debug.println("(BookingGo) Response: " + response.toString());
                 System.out.println(response.toString());
 
-                offers = ParameterAndResponseHandler.getCarsAndPrices(response.toString(), debug, supplier, offers);
+                // Call function that handle with the response
+                ParameterAndResponseHandler.getCarsAndPrices(response.toString(), debug, supplier, offers);
+
+                // Debug
                 debug.println("(BookingGo) Before sorting...");
                 for (Map.Entry<String, Offer> offer : offers.entrySet())
                     debug.println(offer.getValue().toString());
@@ -126,10 +136,6 @@ public class BookingGo {
             System.exit(0);
         }
 
-        /**
-         * Create an instance of HttpUrlConnection
-         */
-
         // Set parameters from commandline argument
         Map<String, String> param = new HashMap<>();
         String pickUp = args[0] + "," + args[1];
@@ -144,11 +150,13 @@ public class BookingGo {
         suppliers[1] = "jeff";
         suppliers[2] = "eric";
 
+        // Create HashMap to hold the offers
         Map<String, Offer> offers = new HashMap<>();
 
         for (String supplier : suppliers)
-            getTheOffersFromSuppliers(supplier, param, debug, noOfPassengers, offers);
+            getTheOffersFromSuppliers(supplier, param, debug, offers);
 
+        // Convert HashMap to Array
         Offer[] offersArray = offers.values().toArray(new Offer[0]);
 
         //Sort the list of offers

@@ -25,12 +25,17 @@ public class ParameterAndResponseHandler {
         return URL;
     }
 
-    public static Map<String, Offer> getCarsAndPrices(String response, PrintWriter debug, String supplier,
+    /**
+     * Function that handles with response of suppliers. If there is already an offer for a car type it compares it
+     * and keeps the cheaper otherwise adds it to the HashMap
+     * @param response Response that got from a supplier
+     * @param debug Debug file
+     * @param supplier Name of the current supplier
+     * @param offers HashMap including final offers
+     */
+    public static void getCarsAndPrices(String response, PrintWriter debug, String supplier,
                                                       Map<String, Offer> offers) {
-        // Get the number of offers from response and create an array to hold them
-        int noOfOffers = response.split("car_type", -1).length-1;
-        debug.println("(ParameterAndResponseHandler) The number of offers: " + noOfOffers);
-
+        // Get the useful information from the response
         int firstIndex, lastIndex = 0;
 
         while (response.indexOf("car_type", lastIndex) > 0) {
@@ -47,16 +52,20 @@ public class ParameterAndResponseHandler {
             // Create a new instance of Offer
             Offer temp = new Offer (car, supplier, price);
 
+            // If there is already an offer for a car type it compares it and keeps the cheaper otherwise adds
+            // it to the HashMap
             if(offers.containsKey(car)) {
                 debug.println("(ParameterAndResponseHandler) includes key " + car);
-                if (temp.getPrice() < offers.get(car).getPrice())
+                if (temp.getPrice() < offers.get(car).getPrice()) {
+                    debug.println("SWAP!! Offer: " + offers.get(car).toString() + " to offer: " + temp.toString());
                     offers.replace(car, temp);
+                }
             }
             else {
                 offers.put(car, temp);
                 debug.println("(ParameterAndResponseHandler) add key " + car + " and offer " + temp.toString());
             }
         }
-        return offers;
+        debug.println();
     }
 }
