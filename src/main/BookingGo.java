@@ -64,9 +64,9 @@ public class BookingGo {
         getCurrentTimeUsingCalendar(debug);
 
         // Check the commandline arguments
-        if (args.length != 4) {
+        if (args.length != 5) {
             System.out.println("There must be exactly 4 arguments: Pick up latitude and longitude" +
-                    " and drop off latitude and longitude");
+                    " and drop off latitude and longitude and also the number of passengers");
             debug.println("(BookingGo) Wrong number of commandline arguments");
             debug.println("(BookingGo) *******EXIT*******");
             System.exit(0);
@@ -82,6 +82,8 @@ public class BookingGo {
         String dropOff = args[2] + "," +  args[3];
         param.put("pickup", pickUp);
         param.put("dropoff", dropOff);
+
+        int noOfPassengers = Integer.parseInt(args[4]);
 
         // Get the required URL to the request
         String daveURL = ParameterAndResponseHandler.getURL("dave", param);

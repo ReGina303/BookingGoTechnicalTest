@@ -7,7 +7,7 @@
 package main;
 
 public class Offer {
-    private final String car;
+    private final Car car;
     private final int price;
 
     /**
@@ -16,7 +16,7 @@ public class Offer {
      * @param requiredPrice The required price
      */
     public Offer (String requiredCar, int requiredPrice) {
-        car = requiredCar;
+        car = new Car(requiredCar);
         price = requiredPrice;
     }
 
@@ -25,7 +25,7 @@ public class Offer {
      * @return Type of the car
      */
     public String getCar () {
-        return car;
+        return car.getCarType();
     }
 
     /**
@@ -43,13 +43,13 @@ public class Offer {
      */
     public int compareTo (Offer other) {
         if (price == other.price)
-            return car.compareTo(other.car);
+            return car.getCarType().compareTo(other.car.getCarType());
         else
             return price - other.price;
     }
 
     @Override
     public String toString() {
-        return "{" + car + "} - {" + price + "}";
+        return "{" + car.getCarType() + "} - {" + price + "}";
     }
 }
