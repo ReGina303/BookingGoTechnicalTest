@@ -4,7 +4,6 @@
  *
  * @author Nikolett Bakos
  */
-package main;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -49,7 +48,7 @@ public class BookingGo {
             lastIndex = response.indexOf('}', firstIndex + 1);
             int price = Integer.parseInt(response.substring(firstIndex + 7, lastIndex));
 
-            // Create a new instance of Offer
+            // Create a new instance of OfferEntity
             Offer temp = new Offer (car, supplier, price);
 
             // If there is already an offer for a car type it compares it and keeps the cheaper otherwise adds
@@ -57,7 +56,7 @@ public class BookingGo {
             if(offers.containsKey(car)) {
                 debug.println("(ParameterAndResponseHandler) includes key " + car);
                 if (temp.getPrice() < offers.get(car).getPrice()) {
-                    debug.println("SWAP!!!!! Offer: " + offers.get(car).toString() + " to offer: " + temp.toString());
+                    debug.println("SWAP!!!!! OfferEntity: " + offers.get(car).toString() + " to offer: " + temp.toString());
                     offers.replace(car, temp);
                 }
             }
@@ -83,9 +82,9 @@ public class BookingGo {
     }
 
     /**
-     * Implementation of bubble sort for array type Offer
+     * Implementation of bubble sort for array type OfferEntity
      *
-     * @param needToSort Offer type array that need to be sorted
+     * @param needToSort OfferEntity type array that need to be sorted
      */
     private static void bubbleSort (Offer[] needToSort) {
         int unsortedLength = needToSort.length;
