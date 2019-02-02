@@ -172,6 +172,8 @@ public class BookingGo {
         /**
          * Create a debug file used across the application
          */
+        String[] suppliers;
+
         PrintWriter debug = null;
         try {
             debug = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt", true)));
@@ -185,9 +187,8 @@ public class BookingGo {
             getCurrentTimeUsingCalendar(debug);
 
         // Check the commandline arguments
-        if (args.length != 5) {
-            System.out.println("There must be exactly 5 arguments: Pick up latitude and longitude" +
-                    " and drop off latitude and longitude and also the number of passengers");
+        if (args.length > 6 || args.length < 4) {
+            System.out.println("Wrong number of commandline arguments");
             debug.println("(BookingGo) Wrong number of commandline arguments");
             debug.println("(BookingGo) *******EXIT*******");
             System.exit(0);
@@ -200,20 +201,41 @@ public class BookingGo {
         param.put("pickup", pickUp);
         param.put("dropoff", dropOff);
 
-        int noOfPassengers = Integer.parseInt(args[4]);
+        int noOfPassengers = -1;
 
-        // Array to hold the suppliers
-        String[] suppliers = new String[3];
-        suppliers[0] = "dave";
-        suppliers[1] = "jeff";
-        suppliers[2] = "eric";
+        if(args.length == 5 && !args[4].equals("dave")) {
+            noOfPassengers = Integer.parseInt(args[4]);
+        }
+
+        if(args.length == 6) {
+            noOfPassengers = Integer.parseInt(args[5]);
+        }
+
+        if (args[4].equals("dave")) {
+            suppliers = new String[1];
+            suppliers[0] = "dave";
+        }
+        else {
+            // Array to hold the suppliers
+            suppliers = new String[3];
+            suppliers[0] = "dave";
+            suppliers[1] = "jeff";
+            suppliers[2] = "eric";
+        }
 
         // Create HashMap to hold the offers
         Map<String, Offer> offers = new HashMap<>();
 
         // Get the offers from each supplier and keep the cheapest for each car type
-        for (String supplier : suppliers)
-            getTheOffersFromSuppliers(supplier, param, debug, offers);
+        if(suppliers != null) {
+            for (String supplier : suppliers)
+                getTheOffersFromSuppliers(supplier, param, debug, offers);
+        }
+        else {
+            System.out.println("Something went wrong");
+            debug.println("Something went wrong");
+            System.exit(0);
+        }
 
         // Convert HashMap to Array
         Offer[] offersArray = offers.values().toArray(new Offer[0]);
@@ -224,9 +246,15 @@ public class BookingGo {
         // Before print the list of offers it takes into account the number of passengers
         System.out.println("Your offers in descending order:");
         System.out.println();
-        for (Offer offer : offersArray)
-            if (offer.getNoOfPassengers() >= noOfPassengers)
+        for (Offer offer : offersArray) {
+            if (noOfPassengers > 0) {
+                if (offer.getNoOfPassengers() >= noOfPassengers)
+                    System.out.println(offer.toString());
+            } else {
                 System.out.println(offer.toString());
+            }
+        }
+
 
         debug.println("**********Finished*********");
         debug.println();
