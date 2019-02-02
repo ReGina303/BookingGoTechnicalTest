@@ -1,5 +1,5 @@
 /**
- * BookingGo Technical Test
+ * OfferCalculator Technical Test
  * Last update: 02.02.2019
  *
  * @author Nikolett Bakos
@@ -116,7 +116,7 @@ public class BookingGo {
         // Get the required URL to the request
         String supplierURL = getURL(supplier, param);
 
-        debug.println("(BookingGo) The URL for " + supplier + " is: " + supplierURL);
+        debug.println("(OfferCalculator) The URL for " + supplier + " is: " + supplierURL);
 
         try {
             URL url = new URL(supplierURL);
@@ -132,7 +132,7 @@ public class BookingGo {
             connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 
             int responseCode = connection.getResponseCode();
-            debug.println("(BookingGo) The response code is: " + responseCode);
+            debug.println("(OfferCalculator) The response code is: " + responseCode);
 
             // If the response code was OK then get the response
             if (responseCode == connection.HTTP_OK) {
@@ -147,13 +147,13 @@ public class BookingGo {
 
                 in.close();
 
-                debug.println("(BookingGo) Response: " + response.toString());
+                debug.println("(OfferCalculator) Response: " + response.toString());
 
                 // Call function that handle with the response
                 getCarsAndPrices(response.toString(), debug, supplier, offers);
 
                 // Debug
-                debug.println("(BookingGo) Before sorting...");
+                debug.println("(OfferCalculator) Before sorting...");
                 for (Map.Entry<String, Offer> offer : offers.entrySet())
                     debug.println(offer.getValue().toString());
 
@@ -188,8 +188,8 @@ public class BookingGo {
         // Check the commandline arguments
         if (args.length > 6 || args.length < 4) {
             System.out.println("Wrong number of commandline arguments");
-            debug.println("(BookingGo) Wrong number of commandline arguments");
-            debug.println("(BookingGo) *******EXIT*******");
+            debug.println("(OfferCalculator) Wrong number of commandline arguments");
+            debug.println("(OfferCalculator) *******EXIT*******");
             System.exit(0);
         }
 
