@@ -1,6 +1,6 @@
 /**
  * Class representing a car
- * Last updated: 31.01.2019
+ * Last updated: 02.02.2019
  *
  * @author Nikolett Bakos
  */
@@ -40,10 +40,18 @@ public class Car {
         }
     }
 
+    /**
+     * Getter number of passengers
+     * @return The maximum number of passengers that the car can hold
+     */
     public int getNoOfPassengers() {
         return noOfPassengers;
     }
 
+    /**
+     * Getter car type
+     * @return Name of the car type
+     */
     public String getCarType() {
         return carType;
     }

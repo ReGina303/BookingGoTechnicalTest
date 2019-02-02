@@ -1,6 +1,6 @@
 /**
  * A class represents a pair of car and price to help improve the sorting
- * Last updated: 31.01.2019
+ * Last updated: 02.02.2019
  *
  * @author Nikolett Bakos
  */

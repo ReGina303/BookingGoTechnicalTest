@@ -1,13 +1,12 @@
 /**
  * The class is used to handle with the parameters of a request and extract information from response
  *
- * Last updated: 31.01.2019
+ * Last updated: 02.02.2019
  * @author Nikolett Bakos
  */
 package main;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
 import java.util.Map;
 
 public class ParameterAndResponseHandler {
@@ -57,7 +56,7 @@ public class ParameterAndResponseHandler {
             if(offers.containsKey(car)) {
                 debug.println("(ParameterAndResponseHandler) includes key " + car);
                 if (temp.getPrice() < offers.get(car).getPrice()) {
-                    debug.println("SWAP!! Offer: " + offers.get(car).toString() + " to offer: " + temp.toString());
+                    debug.println("SWAP!!!!! Offer: " + offers.get(car).toString() + " to offer: " + temp.toString());
                     offers.replace(car, temp);
                 }
             }

@@ -1,6 +1,6 @@
 /**
  * BookingGo Technical Test
- * Last update: 31.01.2019
+ * Last update: 02.02.2019
  *
  * @author Nikolett Bakos
  */
@@ -20,7 +20,7 @@ public class BookingGo {
      *
      * @param debug The debug file
      */
-    public static void getCurrentTimeUsingCalendar(PrintWriter debug) {
+    private static void getCurrentTimeUsingCalendar(PrintWriter debug) {
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         debug.println("*****Date/time of run: " + timeStamp + "******");
     }
@@ -30,7 +30,7 @@ public class BookingGo {
      *
      * @param needToSort Offer type array that need to be sorted
      */
-    public static void bubbleSort (Offer[] needToSort) {
+    private static void bubbleSort (Offer[] needToSort) {
         int unsortedLength = needToSort.length;
         // If no change is made on a pass the loop can stop
         boolean isChanged;
@@ -55,7 +55,7 @@ public class BookingGo {
      * @param debug Debug file
      * @param offers HashMap of offers got so far (may empty)
      */
-    public static void getTheOffersFromSuppliers (String supplier, Map<String, String> param,
+    private static void getTheOffersFromSuppliers (String supplier, Map<String, String> param,
                                                   PrintWriter debug, Map<String, Offer> offers) {
         // Get the required URL to the request
         String supplierURL = ParameterAndResponseHandler.getURL(supplier, param);
@@ -92,7 +92,6 @@ public class BookingGo {
                 in.close();
 
                 debug.println("(BookingGo) Response: " + response.toString());
-                System.out.println(response.toString());
 
                 // Call function that handle with the response
                 ParameterAndResponseHandler.getCarsAndPrices(response.toString(), debug, supplier, offers);
@@ -112,7 +111,7 @@ public class BookingGo {
 
     }
 
-    public static void main (String [] args) throws Exception {
+    public static void main (String [] args) {
         /**
          * Create a debug file used across the application
          */
@@ -125,7 +124,8 @@ public class BookingGo {
         }
 
         // Set timestamp for the debug file
-        getCurrentTimeUsingCalendar(debug);
+        if(debug != null)
+            getCurrentTimeUsingCalendar(debug);
 
         // Check the commandline arguments
         if (args.length != 5) {
@@ -145,6 +145,7 @@ public class BookingGo {
 
         int noOfPassengers = Integer.parseInt(args[4]);
 
+        // Array to hold the suppliers
         String[] suppliers = new String[3];
         suppliers[0] = "dave";
         suppliers[1] = "jeff";
@@ -153,16 +154,19 @@ public class BookingGo {
         // Create HashMap to hold the offers
         Map<String, Offer> offers = new HashMap<>();
 
+        // Get the offers from each supplier and keep the cheapest for each car type
         for (String supplier : suppliers)
             getTheOffersFromSuppliers(supplier, param, debug, offers);
 
         // Convert HashMap to Array
         Offer[] offersArray = offers.values().toArray(new Offer[0]);
 
-        //Sort the list of offers
+        //Sort the list of offers in descending order based on the price
         bubbleSort(offersArray);
 
         // Before print the list of offers it takes into account the number of passengers
+        System.out.println("Your offers in descending order:");
+        System.out.println();
         for (Offer offer : offersArray)
             if (offer.getNoOfPassengers() >= noOfPassengers)
                 System.out.println(offer.toString());
