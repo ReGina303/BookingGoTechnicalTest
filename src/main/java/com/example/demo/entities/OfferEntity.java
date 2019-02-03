@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name="offers")
 public class OfferEntity {
     private @Id @GeneratedValue Long id;
 

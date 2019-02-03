@@ -171,6 +171,15 @@ public class OfferCalculator {
 
     }
 
+    /**
+     * Main method of the calculator invoked by the offer controller
+     * @param pickLat Pick up latitude
+     * @param pickLong Pick up longitude
+     * @param dropLat Drop off latitude
+     * @param dropLong Drop off longitude
+     * @param noOfPassengers Number of required passengers
+     * @return Offer array contains the offers based on the request
+     */
     public OfferEntity[] getOffers(double pickLat, double pickLong, double dropLat,
                              double dropLong, int noOfPassengers) {
 

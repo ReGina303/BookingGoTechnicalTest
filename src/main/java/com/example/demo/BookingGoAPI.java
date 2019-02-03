@@ -1,3 +1,9 @@
+/**
+ * Main class of Spring Boot Application
+ * Last updated: 03.02.2019
+ *
+ * @author Nikolett Bakos
+ */
 package com.example.demo;
 
 import org.springframework.boot.SpringApplication;

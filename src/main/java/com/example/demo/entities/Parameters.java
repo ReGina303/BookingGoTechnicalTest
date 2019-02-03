@@ -1,3 +1,9 @@
+/**
+ * Class represents the parameters of a query. It is only a support class to the controller.
+ * Last updated: 03.02.2019
+ *
+ * @author Nikolett Bakos
+ */
 package com.example.demo.entities;
 
 import javax.persistence.Entity;
