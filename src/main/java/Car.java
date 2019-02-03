@@ -4,7 +4,6 @@
  *
  * @author Nikolett Bakos
  */
-package main;
 
 public class Car {
     private final String carType;

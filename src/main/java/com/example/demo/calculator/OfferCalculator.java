@@ -1,10 +1,13 @@
+package com.example.demo.calculator;
+
 /**
- * BookingGo Technical Test
+ * OfferCalculator Technical Test
  * Last update: 02.02.2019
  *
  * @author Nikolett Bakos
  */
-package main;
+
+import com.example.demo.entities.OfferEntity;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -14,13 +17,15 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BookingGo {
+public class OfferCalculator {
+    private static Map<String, Integer> noOfPassengersByCar = new HashMap<>();
+    private static PrintWriter debug = null;
+    private static int noOfRequiredPassengers;
+
     /**
      * Add the current date and time to the debug file
-     *
-     * @param debug The debug file
      */
-    private static void getCurrentTimeUsingCalendar(PrintWriter debug) {
+    private static void getCurrentTimeUsingCalendar() {
         String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime());
         debug.println("*****Date/time of run: " + timeStamp + "******");
     }
@@ -29,12 +34,11 @@ public class BookingGo {
      * Function that handles with response of suppliers. If there is already an offer for a car type it compares it
      * and keeps the cheaper otherwise adds it to the HashMap
      * @param response Response that got from a supplier
-     * @param debug Debug file
      * @param supplier Name of the current supplier
      * @param offers HashMap including final offers
      */
-    public static void getCarsAndPrices(String response, PrintWriter debug, String supplier,
-                                        Map<String, Offer> offers) {
+    public static void getCarsAndPrices(String response, String supplier,
+                                        Map<String, OfferEntity> offers) {
         // Get the useful information from the response
         int firstIndex, lastIndex = 0;
 
@@ -49,19 +53,19 @@ public class BookingGo {
             lastIndex = response.indexOf('}', firstIndex + 1);
             int price = Integer.parseInt(response.substring(firstIndex + 7, lastIndex));
 
-            // Create a new instance of Offer
-            Offer temp = new Offer (car, supplier, price);
+            // Create a new instance of OfferEntity
+            OfferEntity temp = new OfferEntity(car, supplier, price);
 
             // If there is already an offer for a car type it compares it and keeps the cheaper otherwise adds
             // it to the HashMap
             if(offers.containsKey(car)) {
                 debug.println("(ParameterAndResponseHandler) includes key " + car);
                 if (temp.getPrice() < offers.get(car).getPrice()) {
-                    debug.println("SWAP!!!!! Offer: " + offers.get(car).toString() + " to offer: " + temp.toString());
+                    debug.println("SWAP!!!!! OfferEntity: " + offers.get(car).toString() + " to offer: " + temp.toString());
                     offers.replace(car, temp);
                 }
             }
-            else {
+            else if (noOfPassengersByCar.get(car) >= noOfRequiredPassengers) {
                 offers.put(car, temp);
                 debug.println("(ParameterAndResponseHandler) add key " + car + " and offer " + temp.toString());
             }
@@ -83,11 +87,11 @@ public class BookingGo {
     }
 
     /**
-     * Implementation of bubble sort for array type Offer
+     * Implementation of bubble sort for array type OfferEntity
      *
-     * @param needToSort Offer type array that need to be sorted
+     * @param needToSort OfferEntity type array that need to be sorted
      */
-    private static void bubbleSort (Offer[] needToSort) {
+    private static void bubbleSort (OfferEntity[] needToSort) {
         int unsortedLength = needToSort.length;
         // If no change is made on a pass the loop can stop
         boolean isChanged;
@@ -95,7 +99,7 @@ public class BookingGo {
             isChanged = false;
             for (int index = 0; index < unsortedLength - 1; index++) {
                 if (needToSort[index].compareTo(needToSort[index + 1]) < 0) {
-                    Offer temp = needToSort[index];
+                    OfferEntity temp = needToSort[index];
                     needToSort[index] = needToSort[index + 1];
                     needToSort[index + 1] = temp;
                     isChanged = true;
@@ -109,15 +113,14 @@ public class BookingGo {
      * Get the offers from a supplier and store the cheapest offer for each car type in a HashMap
      * @param supplier Name of the supplier
      * @param param Latitude and longitude of pick up and drop off locations
-     * @param debug Debug file
      * @param offers HashMap of offers got so far (may empty)
      */
     private static void getTheOffersFromSuppliers (String supplier, Map<String, String> param,
-                                                  PrintWriter debug, Map<String, Offer> offers) {
+                                                   Map<String, OfferEntity> offers) {
         // Get the required URL to the request
         String supplierURL = getURL(supplier, param);
 
-        debug.println("(BookingGo) The URL for " + supplier + " is: " + supplierURL);
+        debug.println("(OfferCalculator) The URL for " + supplier + " is: " + supplierURL);
 
         try {
             URL url = new URL(supplierURL);
@@ -133,7 +136,7 @@ public class BookingGo {
             connection.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
 
             int responseCode = connection.getResponseCode();
-            debug.println("(BookingGo) The response code is: " + responseCode);
+            debug.println("(OfferCalculator) The response code is: " + responseCode);
 
             // If the response code was OK then get the response
             if (responseCode == connection.HTTP_OK) {
@@ -148,14 +151,14 @@ public class BookingGo {
 
                 in.close();
 
-                debug.println("(BookingGo) Response: " + response.toString());
+                debug.println("(OfferCalculator) Response: " + response.toString());
 
                 // Call function that handle with the response
-                getCarsAndPrices(response.toString(), debug, supplier, offers);
+                getCarsAndPrices(response.toString(), supplier, offers);
 
                 // Debug
-                debug.println("(BookingGo) Before sorting...");
-                for (Map.Entry<String, Offer> offer : offers.entrySet())
+                debug.println("(OfferCalculator) Before sorting...");
+                for (Map.Entry<String, OfferEntity> offer : offers.entrySet())
                     debug.println(offer.getValue().toString());
 
             }
@@ -168,15 +171,34 @@ public class BookingGo {
 
     }
 
-    public static void main (String [] args) {
-        /**
-         * Create a debug file used across the application
-         */
+    /**
+     * Main method of the calculator invoked by the offer controller
+     * @param pickLat Pick up latitude
+     * @param pickLong Pick up longitude
+     * @param dropLat Drop off latitude
+     * @param dropLong Drop off longitude
+     * @param noOfPassengers Number of required passengers
+     * @return Offer array contains the offers based on the request
+     */
+    public OfferEntity[] getOffers(double pickLat, double pickLong, double dropLat,
+                             double dropLong, int noOfPassengers) {
+
+        // Add the car types and the maximum number of passengers to HashMap
+        noOfPassengersByCar.put("STANDARD", 4);
+        noOfPassengersByCar.put("EXECUTIVE", 4);
+        noOfPassengersByCar.put("LUXURY", 4);
+        noOfPassengersByCar.put("PEOPLE_CARRIER", 6);
+        noOfPassengersByCar.put("LUXURY_PEOPLE_CARRIER", 6);
+        noOfPassengersByCar.put("MINIBUS", 16);
+
+        // Array to hold suppliers
         String[] suppliers;
 
-        PrintWriter debug = null;
+        noOfRequiredPassengers = noOfPassengers;
+
+        // Create a debug file used across the calculation
         try {
-            debug = new PrintWriter(new BufferedWriter(new FileWriter("debug.txt", true)));
+            debug = new PrintWriter(new BufferedWriter(new FileWriter("debugAPI.txt", true)));
         }
         catch (IOException e){
             System.err.println(e);
@@ -184,79 +206,42 @@ public class BookingGo {
 
         // Set timestamp for the debug file
         if(debug != null)
-            getCurrentTimeUsingCalendar(debug);
-
-        // Check the commandline arguments
-        if (args.length > 6 || args.length < 4) {
-            System.out.println("Wrong number of commandline arguments");
-            debug.println("(BookingGo) Wrong number of commandline arguments");
-            debug.println("(BookingGo) *******EXIT*******");
-            System.exit(0);
-        }
+            getCurrentTimeUsingCalendar();
 
         // Set parameters from commandline argument
         Map<String, String> param = new HashMap<>();
-        String pickUp = args[0] + "," + args[1];
-        String dropOff = args[2] + "," +  args[3];
+        String pickUp = pickLat + "," + pickLong;
+        String dropOff = dropLat + "," +  dropLong;
         param.put("pickup", pickUp);
         param.put("dropoff", dropOff);
 
-        int noOfPassengers = -1;
-
-        if(args.length == 5 && !args[4].equals("dave")) {
-            noOfPassengers = Integer.parseInt(args[4]);
-        }
-
-        if(args.length == 6) {
-            noOfPassengers = Integer.parseInt(args[5]);
-        }
-
-        if (args[4].equals("dave")) {
-            suppliers = new String[1];
-            suppliers[0] = "dave";
-        }
-        else {
-            // Array to hold the suppliers
-            suppliers = new String[3];
-            suppliers[0] = "dave";
-            suppliers[1] = "jeff";
-            suppliers[2] = "eric";
-        }
+        // Array to hold the suppliers
+        suppliers = new String[3];
+        suppliers[0] = "dave";
+        suppliers[1] = "jeff";
+        suppliers[2] = "eric";
 
         // Create HashMap to hold the offers
-        Map<String, Offer> offers = new HashMap<>();
+        Map<String, OfferEntity> offers = new HashMap<>();
 
         // Get the offers from each supplier and keep the cheapest for each car type
         if(suppliers != null) {
             for (String supplier : suppliers)
-                getTheOffersFromSuppliers(supplier, param, debug, offers);
+                getTheOffersFromSuppliers(supplier, param, offers);
         }
         else {
             System.out.println("Something went wrong");
-            debug.println("Something went wrong");
+            debug.println("Something went wrong when creating supplier's array");
             System.exit(0);
         }
 
         // Convert HashMap to Array
-        Offer[] offersArray = offers.values().toArray(new Offer[0]);
+        OfferEntity[] offersArray = offers.values().toArray(new OfferEntity[0]);
 
         //Sort the list of offers in descending order based on the price
         bubbleSort(offersArray);
 
-        // Before print the list of offers it takes into account the number of passengers
-        System.out.println("Your offers in descending order:");
-        System.out.println();
-        for (Offer offer : offersArray) {
-            if (noOfPassengers > 0) {
-                if (offer.getNoOfPassengers() >= noOfPassengers)
-                    System.out.println(offer.toString());
-            } else {
-                System.out.println(offer.toString());
-            }
-        }
-
-
-        debug.println("**********Finished*********");
+        debug.println("**********Finished calculation*********");
         debug.println();
         debug.println();
 
@@ -266,5 +251,6 @@ public class BookingGo {
                 System.err.println("Something went wrong with the debug file");
             }
         }
+        return offersArray;
     }
 }

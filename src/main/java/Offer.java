@@ -1,10 +1,9 @@
 /**
- * A class represents a pair of car and price to help improve the sorting
+ * A class represents an offer
  * Last updated: 02.02.2019
  *
  * @author Nikolett Bakos
  */
-package main;
 
 public class Offer {
     private final Car car;
