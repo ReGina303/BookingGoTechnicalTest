@@ -21,6 +21,14 @@ public class OfferServiceImpl implements OfferService {
     }
 
     @Override
+    public Iterable<OfferEntity> findAll() {
+        Iterable<OfferEntity> offers = offerRepo.findAll();
+
+        return offers;
+    }
+
+
+    @Override
     public <S extends OfferEntity> S save(S entity) {
         return offerRepo.save(entity);
     }

@@ -11,5 +11,7 @@ import com.example.demo.entities.OfferEntity;
 public interface OfferService {
     public long count();
 
+    public Iterable<OfferEntity> findAll();
+
     public <S extends OfferEntity> S save(S entity);
 }
