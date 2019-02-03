@@ -10,6 +10,8 @@ import com.example.demo.entities.OfferEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Iterator;
+
 @Service
 public class OfferServiceImpl implements OfferService {
     @Autowired
@@ -27,9 +29,18 @@ public class OfferServiceImpl implements OfferService {
         return offers;
     }
 
-
     @Override
     public <S extends OfferEntity> S save(S entity) {
         return offerRepo.save(entity);
     }
+
+    public void deleteById(Long id) {
+        offerRepo.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        offerRepo.deleteAll();
+    }
+
 }

@@ -52,6 +52,7 @@ public class OfferController {
      */
     @PostMapping("/offers")
     List<OfferEntity> newOffer(@RequestBody Parameters param) {
+        offerRepo.deleteAll();
 
         // Calls the function which calculate the offers
         OfferEntity[] offers = calc.getOffers(param.getPicklat(), param.getPicklong(),

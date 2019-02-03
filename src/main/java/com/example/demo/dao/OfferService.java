@@ -14,4 +14,6 @@ public interface OfferService {
     public Iterable<OfferEntity> findAll();
 
     public <S extends OfferEntity> S save(S entity);
+
+    public void deleteAll();
 }
