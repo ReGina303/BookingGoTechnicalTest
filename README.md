@@ -22,3 +22,5 @@ When you configure the run the main class is 'BookingGo' and the program argumen
 It doesn't accept less than 4 or more than 6 arguments however there is no validity check for the type of arguments.
 
 ## Part2
+
+It uses port 8085.
