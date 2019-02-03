@@ -23,4 +23,12 @@ It doesn't accept less than 4 or more than 6 arguments however there is no valid
 
 ## Part2
 
-It uses port 8085 as default but in case of error of this port it can be changed
+It uses port 8085 as default but in case of error of this port it can be changed via `resources/application.properties`.
+
+When edit the configuration set the main class as `com.example.demo.BookingGoAPI`.
+
+To check the result of latest query use: 
+`curl -v localhost:8085/offers`
+To submit a new query:
+`curl -X POST localhost:8085/offers -H 'Content-type:application/json' -d '{"picklat": "51.470020", "picklong": "-0.454295", "droplat": "51.00000", "droplong": "1.0000", "passengers": "4"}'` where the numbers can be varied between the curly brackets
+The new query will list the offers from all the suppliers considering the number of passengers, the cheapest offer for each car type in descending order.
