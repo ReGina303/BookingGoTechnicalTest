@@ -23,4 +23,4 @@ It doesn't accept less than 4 or more than 6 arguments however there is no valid
 
 ## Part2
 
-It uses port 8085.
+It uses port 8085 as default but in case of error of this port it can be changed
